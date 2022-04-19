@@ -490,6 +490,8 @@ namespace GitHub.Runner.Worker
 
         public string GetGitHubContext(string name)
         {
+            // HACK: what if we check here if the tainted github data is accessed.
+             
             ArgUtil.NotNullOrEmpty(name, nameof(name));
             var githubContext = ExpressionValues["github"] as GitHubContext;
             if (githubContext.TryGetValue(name, out var value))
