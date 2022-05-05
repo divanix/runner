@@ -20,6 +20,7 @@ namespace GitHub.Runner.Worker
         public List<string> PrependPath { get; set; }
         public List<ContainerInfo> ServiceContainers { get; set; }
         public StepsContext StepsContext { get; set; }
+        // HACK: what are those variables?
         public Variables Variables { get; set; }
         public bool WriteDebug { get; set; }
     }

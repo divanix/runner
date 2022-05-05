@@ -62,7 +62,7 @@ namespace GitHub.Runner.Worker
                         channelMessage = await channel.ReceiveAsync(csChannelMessage.Token);
                     }
 
-                    // Deserialize the job message.
+                    // HACK: Deserialize the job message.
                     Trace.Info("Message received.");
                     ArgUtil.Equal(MessageType.NewJobRequest, channelMessage.MessageType, nameof(channelMessage.MessageType));
                     ArgUtil.NotNullOrEmpty(channelMessage.Body, nameof(channelMessage.Body));

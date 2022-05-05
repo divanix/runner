@@ -38,6 +38,8 @@ namespace GitHub.Runner.Worker
             ArgUtil.NotNull(message.Variables, nameof(message.Variables));
             ArgUtil.NotNull(message.Steps, nameof(message.Steps));
             Trace.Info("Job ID {0}", message.JobId);
+            
+            // HACK: this is the EARLIEST place where we have access to inputs and environment variables 
 
             DateTime jobStartTimeUtc = DateTime.UtcNow;
 
@@ -161,6 +163,11 @@ namespace GitHub.Runner.Worker
                     Trace.Info($"Waiting for job to be marked as started.");
                     await Task.WhenAny(_jobServerQueue.JobRecordUpdated.Task, Task.Delay(1000));
                 }
+
+                // HACK: create tainted data dictionary for the job
+                // jobContext.TaintedVariables = new Dictionary<string, string>();
+                jobContext.TaintedVariables["env"] = "REACTION";
+
 
                 // Run all job steps
                 Trace.Info("Run all job steps.");

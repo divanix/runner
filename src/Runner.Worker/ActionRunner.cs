@@ -70,6 +70,7 @@ namespace GitHub.Runner.Worker
             // Validate args.
             Trace.Entering();
             ArgUtil.NotNull(ExecutionContext, nameof(ExecutionContext));
+            // HACK: Action variable contains input that is tainted. Maybe we can leverage it here.
             ArgUtil.NotNull(Action, nameof(Action));
             var taskManager = HostContext.GetService<IActionManager>();
             var handlerFactory = HostContext.GetService<IHandlerFactory>();
@@ -178,6 +179,7 @@ namespace GitHub.Runner.Worker
             }
             else
             {
+                // HACK: evaluates the inputs. However, Actions.Inputs still contains template string, which is good for us!
                 var templateEvaluator = ExecutionContext.ToPipelineTemplateEvaluator();
                 inputs = templateEvaluator.EvaluateStepInputs(Action.Inputs, ExecutionContext.ExpressionValues, ExecutionContext.ExpressionFunctions);
             }

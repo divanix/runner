@@ -44,7 +44,8 @@ namespace GitHub.Runner.Worker
         TaskResult? CommandResult { get; set; }
         CancellationToken CancellationToken { get; }
         GlobalContext Global { get; }
-
+        // HACK: add tainted dictionary here
+        Dictionary<string, string> TaintedVariables { get; set; }
         Dictionary<string, string> IntraActionState { get; }
         Dictionary<string, VariableValue> JobOutputs { get; }
         ActionsEnvironmentReference ActionsEnvironment { get; }
@@ -153,6 +154,8 @@ namespace GitHub.Runner.Worker
         public ActionRunStage Stage { get; private set; }
         public Task ForceCompleted => _forceCompleted.Task;
         public CancellationToken CancellationToken => _cancellationTokenSource.Token;
+        // HACK: implementing tainted variables
+        public Dictionary<string, string> TaintedVariables { get; set; }
         public Dictionary<string, string> IntraActionState { get; private set; }
         public Dictionary<string, VariableValue> JobOutputs { get; private set; }
 
@@ -507,6 +510,7 @@ namespace GitHub.Runner.Worker
 
         public void SetOutput(string name, string value, out string reference)
         {
+            // HACK: how to taint the output
             ArgUtil.NotNullOrEmpty(name, nameof(name));
 
             // Skip if generated context name. Generated context names start with "__". After 3.2 the server will never send an empty context name.
@@ -672,6 +676,20 @@ namespace GitHub.Runner.Worker
             ArgUtil.NotNull(message.Variables, nameof(message.Variables));
             ArgUtil.NotNull(message.Plan, nameof(message.Plan));
 
+
+            // HACK: initialize TaintedVariables
+            TaintedVariables = new Dictionary<string, string>();
+
+            foreach (var env in message.EnvironmentVariables) {
+                // if (env is TemplateToken) {
+                //     // var ctx = env.ToContextData();
+                //     var vals = env.Traverse();
+                //     env.
+                // }
+                foreach (var i in env.Traverse()) {
+
+                }
+            }
             _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
 
             Global = new GlobalContext();
@@ -798,6 +816,7 @@ namespace GitHub.Runner.Worker
 
             // Hook up JobServerQueueThrottling event, we will log warning on server tarpit.
             _jobServerQueue.JobServerQueueThrottling += JobServerQueueThrottling_EventReceived;
+
         }
 
         // Do not add a format string overload. In general, execution context messages are user facing and
@@ -1001,6 +1020,7 @@ namespace GitHub.Runner.Worker
 
         public void WriteWebhookPayload()
         {
+            // HACK: creates a file that contains github context in JSON format
             // Makes directory for event_path data
             var tempDirectory = HostContext.GetDirectory(WellKnownDirectory.Temp);
             var workflowDirectory = Path.Combine(tempDirectory, "_github_workflow");

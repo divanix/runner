@@ -84,6 +84,7 @@ namespace GitHub.Runner.Worker
                 step.ExecutionContext.ExpressionFunctions.Add(new FunctionInfo<HashFilesFunction>(PipelineTemplateConstants.HashFiles, 1, byte.MaxValue));
 
                 // Expression values
+                // NOTE: generates steps context value here
                 step.ExecutionContext.ExpressionValues["steps"] = step.ExecutionContext.Global.StepsContext.GetScope(step.ExecutionContext.ScopeName);
 #if OS_WINDOWS
                 var envContext = new DictionaryContextData();
@@ -92,7 +93,7 @@ namespace GitHub.Runner.Worker
 #endif
                 step.ExecutionContext.ExpressionValues["env"] = envContext;
 
-                // Merge global env
+                // NOTE: Merge global env
                 foreach (var pair in step.ExecutionContext.Global.EnvironmentVariables)
                 {
                     envContext[pair.Key] = new StringContextData(pair.Value ?? string.Empty);

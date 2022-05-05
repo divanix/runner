@@ -88,6 +88,7 @@ namespace GitHub.DistributedTask.ObjectTemplating
 
         private TemplateToken Evaluate(DefinitionInfo definition)
         {
+            // FIXME: here the evaluation of the template happens. Maybe we can update this function to taint untrusted input
             // Scalar
             if (m_unraveler.AllowScalar(definition.Expand, out ScalarToken scalar))
             {

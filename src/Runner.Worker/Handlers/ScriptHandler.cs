@@ -140,6 +140,8 @@ namespace GitHub.Runner.Worker.Handlers
             // Validate args
             Trace.Entering();
             ArgUtil.NotNull(ExecutionContext, nameof(ExecutionContext));
+            // HACK: can we check the inputs here before executing. 
+            // Then the problem will be if we can pinpoint the injection
             ArgUtil.NotNull(Inputs, nameof(Inputs));
 
             var githubContext = ExecutionContext.ExpressionValues["github"] as GitHubContext;
@@ -305,7 +307,7 @@ namespace GitHub.Runner.Worker.Handlers
             {
                 StepHost.OutputDataReceived += stdoutManager.OnDataReceived;
                 StepHost.ErrorDataReceived += stderrManager.OnDataReceived;
-
+                
                 // Execute
                 int exitCode = await StepHost.ExecuteAsync(workingDirectory: StepHost.ResolvePathForStepHost(workingDirectory),
                                             fileName: fileName,
