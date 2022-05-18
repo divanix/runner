@@ -166,7 +166,7 @@ namespace GitHub.Runner.Worker
 
                 // HACK: create tainted data dictionary for the job
                 // jobContext.TaintedVariables = new Dictionary<string, string>();
-                jobContext.TaintedVariables["env"] = "REACTION";
+                // jobContext.TaintedVariables["env"] = "REACTION";
 
 
                 // Run all job steps

@@ -44,8 +44,6 @@ namespace GitHub.Runner.Worker
         TaskResult? CommandResult { get; set; }
         CancellationToken CancellationToken { get; }
         GlobalContext Global { get; }
-        // HACK: add tainted dictionary here
-        Dictionary<string, string> TaintedVariables { get; set; }
         Dictionary<string, string> IntraActionState { get; }
         Dictionary<string, VariableValue> JobOutputs { get; }
         ActionsEnvironmentReference ActionsEnvironment { get; }

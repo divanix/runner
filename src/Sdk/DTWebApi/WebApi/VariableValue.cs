@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace GitHub.DistributedTask.WebApi
 {
+    // HACK: where it is used? It is used inside ExecutionContext as part of JobOutputs
     [DataContract]
     public class VariableValue
     {
