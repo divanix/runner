@@ -50,8 +50,9 @@ namespace GitHub.Runner.Worker
         ActionsStepTelemetry StepTelemetry { get; }
         DictionaryContextData ExpressionValues { get; }
         IList<IFunctionInfo> ExpressionFunctions { get; }
+        ITaintContext TaintContext { get; }
         JobContext JobContext { get; }
-
+        
         // Only job level ExecutionContext has JobSteps
         Queue<IStep> JobSteps { get; }
 
@@ -152,8 +153,8 @@ namespace GitHub.Runner.Worker
         public ActionRunStage Stage { get; private set; }
         public Task ForceCompleted => _forceCompleted.Task;
         public CancellationToken CancellationToken => _cancellationTokenSource.Token;
-        // HACK: implementing tainted variables
-        public Dictionary<string, string> TaintedVariables { get; set; }
+        
+        
         public Dictionary<string, string> IntraActionState { get; private set; }
         public Dictionary<string, VariableValue> JobOutputs { get; private set; }
 
@@ -214,6 +215,7 @@ namespace GitHub.Runner.Worker
                 _record.ResultCode = value;
             }
         }
+        public ITaintContext TaintContext { get; } = new TaintContext();
 
         public ExecutionContext Root
         {
@@ -673,10 +675,6 @@ namespace GitHub.Runner.Worker
             ArgUtil.NotNull(message.Resources, nameof(message.Resources));
             ArgUtil.NotNull(message.Variables, nameof(message.Variables));
             ArgUtil.NotNull(message.Plan, nameof(message.Plan));
-
-
-            // HACK: initialize TaintedVariables
-            TaintedVariables = new Dictionary<string, string>();
 
             foreach (var env in message.EnvironmentVariables) {
                 // if (env is TemplateToken) {
