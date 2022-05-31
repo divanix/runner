@@ -67,6 +67,7 @@ namespace GitHub.Runner.Common {
             return EnvironmentVariables.TryAdd(key, taintVariable);
         }
 
+        // TODO: look for workflow syntax to make sure that we can not pass anything except string
         public bool AddInput(string key, string value)
         {
             var taintVariable = new TaintVariable(value, IsTainted(value));
@@ -113,22 +114,27 @@ namespace GitHub.Runner.Common {
 
         public bool IsTaintedGithub(string value)
         {
-            throw new NotImplementedException();
+            // FIXME: update the regex
+            MatchCollection matches = Regex.Matches(value, @"${\s*{\s*github\.event\.inputs\.[-_a-z0-9]+\s*}\s*}", RegexOptions.IgnoreCase);
+            if (matches.Count > 0) {
+                return true;
+            }
+            return false;
         }
 
         public bool IsTaintedJobOutput(string value)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool IsTaintedStepOutput(string value)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool IsTaintedTemplate(string value)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }
